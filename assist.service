@@ -1,0 +1,13 @@
+[Unit]
+Description=Smart Assistance Pipeline
+After=multi-user.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/pi/assist
+ExecStart=/home/pi/venv/bin/python3 /home/pi/assist/main.py
+Restart=always
+User=pi
+
+[Install]
+WantedBy=multi-user.target
