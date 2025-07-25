@@ -1,0 +1,67 @@
+# Navigate to home directory
+cd ~
+
+# Create project directory
+mkdir -p assist
+cd assist
+
+# Verify location
+pwd
+# Should show: /home/pi/assist
+
+git clone https://github.com/yourusername/assist.git
+cd assist
+
+# Make setup script executable
+chmod +x setup_pi.sh
+
+# Run installation (takes 10-15 minutes)
+./setup_pi.sh
+
+# Activate virtual environment
+source ~/venv/bin/activate
+
+# Update system
+sudo apt-get update && sudo apt-get -y upgrade
+
+# Install system dependencies
+sudo apt-get -y install python3-venv python3-pip \
+    libopenblas-dev libblas-dev libhdf5-dev libjpeg-dev \
+    espeak-ng libespeak1
+
+# Create virtual environment
+python3 -m venv ~/venv
+source ~/venv/bin/activate
+
+# Install PyTorch (compatible version)
+pip install torch==2.5.0 torchvision==0.20.0
+
+# Install other Python packages
+pip install ultralytics==8.3.70 ncnn opencv-python \
+            gpiozero pyttsx3 RPi.GPIO numpy
+
+
+# Convert model to optimized NCNN format
+python3 export_model.py
+
+# Check USB devices (for USB webcam)
+lsusb
+
+# Run full detection test with visualization
+python3 test_detection.py
+
+Optional
+# Copy service file
+sudo cp assist.service /etc/systemd/system/
+
+# Reload systemd
+sudo systemctl daemon-reload
+
+# Enable auto-start
+sudo systemctl enable assist
+
+# Start service now
+sudo systemctl start assist
+
+# Check service status
+sudo systemctl status assist
